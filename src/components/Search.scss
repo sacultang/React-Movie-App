@@ -1,0 +1,12 @@
+.search--container {
+  display: flex;
+  > * {
+    margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  .selects {
+    width: 120px;
+  }
+}
