@@ -9,15 +9,14 @@ const initialState = {
   theMovie: {},
 };
 export const fetchAsyncMovies = createAsyncThunk(
-  'Search/fetchAsyncMovies',
-  async ({ title, type, year, page }) => {
+  'search/fetchAsyncMovies',
+  async ({ title, type, year, page, id }) => {
     if (initialState.loading) return;
+    const url = id
+      ? `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${id}`
+      : `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}`;
+    const response = await axios.get(url).then((res) => res.data);
 
-    const response = await axios
-      .get(
-        `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}`
-      )
-      .then((res) => res.data);
     return response;
   }
 );
