@@ -1,0 +1,37 @@
+.movie {
+  $width: 200px;
+  width: $width;
+  height: calc($width * 3 / 2);
+  background-size: cover;
+  margin: 10px;
+  border-radius: 4px;
+  display: block;
+  position: relative;
+
+  // background-color: $primary;
+  &:hover::after {
+    content: '';
+    border: 6px solid #fdc000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+  }
+  .info {
+    position: absolute;
+    bottom: 0;
+    height: calc(($width * 1 / 2));
+    backdrop-filter: blur(4px);
+    width: 100%;
+    text-align: center;
+    background-color: rgba(black, 0.3);
+    padding: 14px;
+    .title {
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}

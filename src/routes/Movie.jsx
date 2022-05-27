@@ -1,5 +1,45 @@
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { searchMovieWithID } from '../store/features/searchSlice';
+import Loader from '../components/Loader';
 export default function Movie() {
-  return <div>Movie</div>;
+  const dispatch = useDispatch();
+  const theMovie = useSelector((state) => state.searchSlice.theMovie);
+  const loading = useSelector((state) => state.searchSlice.loading);
+  const params = useParams();
+  const [imageLoading, setImageLoading] = useState(true);
+  console.log(theMovie);
+
+  useEffect(() => {
+    dispatch(searchMovieWithID(params));
+  }, []);
+  const requestdiffSizeimage = (url, size = 700) => {
+    if (!url || url === 'N/A') {
+      setImageLoading(false);
+    }
+    const src = url.replace('SX300', `SX${size}`);
+    return src;
+  };
+  return (
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div>
+          <div
+            style={{
+              backgroundImage: `url(${requestdiffSizeimage(theMovie.Poster)})`,
+              width: 500,
+              height: (500 * 3) / 2,
+              backgroundSize: 'cover',
+            }}
+          >
+            {imageLoading && <Loader />}
+          </div>
+          {theMovie.Actors}
+        </div>
+      )}
+    </>
+  );
 }

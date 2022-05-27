@@ -12,23 +12,39 @@ export const fetchAsyncMovies = createAsyncThunk(
   'search/fetchAsyncMovies',
   async ({ title, type, year, page, id }) => {
     if (initialState.loading) return;
-    const url = id
-      ? `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${id}`
-      : `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}`;
+    const url = `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}`;
     const response = await axios.get(url).then((res) => res.data);
 
     return response;
   }
 );
+export const searchMovieWithID = createAsyncThunk(
+  'search/searchMovieWithID',
+  async ({ id }) => {
+    if (initialState.loading) return;
+    const url = `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${id}`;
+    const response = await axios.get(url).then((res) => res.data);
 
+    return response;
+  }
+);
 const searchSlice = createSlice({
   name: 'search',
   initialState,
-  reducers: {},
+  reducers: {
+    updateState: (state, payload) => {
+      Object.keys(payload).forEach((key) => {
+        state[key] = payload[key];
+      });
+    },
+  },
   extraReducers: {
+    [fetchAsyncMovies.pending]: (state) => {
+      if (state.loading) return;
+      state.loading = true;
+    },
     [fetchAsyncMovies.fulfilled]: (state, { payload }) => {
       try {
-        state.loading = true;
         state.movies = [...payload.Search];
         state.message = '';
       } catch {
@@ -38,7 +54,20 @@ const searchSlice = createSlice({
         state.loading = false;
       }
     },
+    [searchMovieWithID.pending]: (state) => {
+      if (state.loading) return;
+      state.loading = true;
+    },
+    [searchMovieWithID.fulfilled]: (state, { payload }) => {
+      try {
+        state.theMovie = payload;
+      } catch {
+        state.theMovie = {};
+      } finally {
+        state.loading = false;
+      }
+    },
   },
 });
-// export const { _fetchMovie } = searchSlice.actions;
+export const { loadingFuc } = searchSlice.actions;
 export default searchSlice.reducer;

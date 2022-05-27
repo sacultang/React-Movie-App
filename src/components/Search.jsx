@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Search.scss';
 import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAsyncMovies } from '../store/features/searchSlice';
+import { fetchAsyncMovies, loadingFuc } from '../store/features/searchSlice';
 
 const filters = [
   {
@@ -27,6 +27,7 @@ const filters = [
 ];
 
 export default function Search() {
+  const [loading, setLoading] = useState(false);
   const [searchs, setSearchs] = useState({
     title: '',
     year: '',
@@ -40,6 +41,7 @@ export default function Search() {
   };
   const onSubmit = (e) => {
     e.preventDefault();
+
     dispatch(fetchAsyncMovies(searchs));
   };
 
