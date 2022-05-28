@@ -8,7 +8,7 @@ import MovieItem from './MovieItem';
 export default function MovieList() {
   const movies = useSelector((state) => state.searchSlice.movies);
   const loading = useSelector((state) => state.searchSlice.loading);
-  const [message, setMessage] = useState('Search for Movies..');
+  const message = useSelector((state) => state.searchSlice.message);
 
   const renderMovies =
     movies.Response === 'True' ? (
@@ -16,12 +16,19 @@ export default function MovieList() {
         return <MovieItem key={movie.imdbID} movie={movie} />;
       })
     ) : (
-      <div>{movies.Error}</div>
+      <h2>{movies.Error}</h2>
     );
 
   return (
     <>
-      <div className='movielist'>{loading ? <Loader /> : renderMovies}</div>
+      <div className='movielist'>
+        <div className={!movies.Search ? 'inner no-result' : 'inner'}>
+          <h2>{message && message}</h2>
+          <div className='movieItems'>
+            {loading ? <Loader /> : renderMovies}
+          </div>
+        </div>
+      </div>
     </>
   );
 }

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const OMDB_API_KEY = 'f6573a61';
-
+const defaultMessage = 'Search for movies..';
 export const fetchAsyncMovies = createAsyncThunk(
   'search/fetchAsyncMovies',
   async ({ title, type, year, page }) => {
@@ -27,6 +27,7 @@ const initialState = {
   shows: {},
   selectedMovieOrShow: {},
   loading: null,
+  message: defaultMessage,
 };
 const searchSlice = createSlice({
   name: 'search',
@@ -45,7 +46,8 @@ const searchSlice = createSlice({
     },
     [fetchAsyncMovies.fulfilled]: (state, { payload }) => {
       // console.log(payload);
-      return { ...state, movies: payload, loading: false };
+
+      return { ...state, movies: payload, loading: false, message: null };
     },
     // [searchMovieWithID.pending]: (state) => {
     //   if (state.loading) return;
