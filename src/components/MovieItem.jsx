@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './MovieItem.scss';
 
 export default function MovieItem({ movie }) {
+  // console.log(movie);
   return (
     <Link
       to={`movie/${movie.imdbID}`}

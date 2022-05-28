@@ -1,29 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { searchMovieWithID } from '../store/features/searchSlice';
 import Loader from '../components/Loader';
+import { searchMovieWithID } from '../store/features/searchSlice';
+
 export default function Movie() {
   const dispatch = useDispatch();
   const theMovie = useSelector((state) => state.searchSlice.theMovie);
-  const loading = useSelector((state) => state.searchSlice.loading);
   const params = useParams();
-  const [imageLoading, setImageLoading] = useState(true);
-  console.log(theMovie);
 
   useEffect(() => {
     dispatch(searchMovieWithID(params));
-  }, []);
+  }, [dispatch]);
+
   const requestdiffSizeimage = (url, size = 700) => {
     if (!url || url === 'N/A') {
-      setImageLoading(false);
     }
     const src = url.replace('SX300', `SX${size}`);
     return src;
   };
+
   return (
     <>
-      {loading ? (
+      {Object.keys(theMovie).length === 0 ? (
         <Loader />
       ) : (
         <div>
@@ -34,9 +33,7 @@ export default function Movie() {
               height: (500 * 3) / 2,
               backgroundSize: 'cover',
             }}
-          >
-            {imageLoading && <Loader />}
-          </div>
+          ></div>
           {theMovie.Actors}
         </div>
       )}

@@ -4,17 +4,14 @@ import App from './App';
 import './index.css';
 import { Provider } from 'react-redux';
 import store from './store/store';
-import './scss/main.scss'
+import './scss/main.scss';
 
 /* 
     React Bootstrap Configuration
 */
 
-
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <App />
+  </Provider>
 );

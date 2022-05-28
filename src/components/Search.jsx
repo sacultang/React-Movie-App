@@ -41,7 +41,6 @@ export default function Search() {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-
     dispatch(fetchAsyncMovies(searchs));
   };
 
