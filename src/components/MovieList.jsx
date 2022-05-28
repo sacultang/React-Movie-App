@@ -16,14 +16,13 @@ export default function MovieList() {
         return <MovieItem key={movie.imdbID} movie={movie} />;
       })
     ) : (
-      <h2>{movies.Error}</h2>
+      <h2>{movies.Error ? movies.Error : message}</h2>
     );
 
   return (
     <>
       <div className='movielist'>
         <div className={!movies.Search ? 'inner no-result' : 'inner'}>
-          <h2>{message && message}</h2>
           <div className='movieItems'>
             {loading ? <Loader /> : renderMovies}
           </div>
