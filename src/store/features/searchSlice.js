@@ -1,18 +1,34 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import _uniqBy from 'lodash/uniqBy';
 
 const OMDB_API_KEY = 'f6573a61';
 const defaultMessage = 'Search for movies..';
 
 export const fetchAsyncMovies = createAsyncThunk(
   'search/fetchAsyncMovies',
-  async ({ title, type, year, page }) => {
-    const url = `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}`;
+  async ({ title, type, year, number }) => {
     const response = await axios
-      .get(url)
+      .get(
+        `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=1`
+      )
       .then((res) => res.data)
       .catch((error) => error.message);
+    const { totalResults } = response;
+    const total = parseInt(totalResults, 10);
+    const pageLength = Math.ceil(total / 10);
     return response;
+    if (pageLength > 1) {
+      for (let page = 2; page < pageLength; page++) {
+        if (page > number / 10) break;
+        const response = await axios
+          .get(
+            `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${title}&type=${type}&y=${year}&page=${page}`
+          )
+          .then((res) => res.data);
+        return response;
+      }
+    }
   }
 );
 export const searchMovieWithID = createAsyncThunk(
@@ -25,11 +41,13 @@ export const searchMovieWithID = createAsyncThunk(
 );
 
 const initialState = {
-  movies: {},
+  movies: [],
+  response: null,
   theMovie: {},
   selectedMovieOrShow: {},
   loading: null,
   message: defaultMessage,
+  error: null,
 };
 const searchSlice = createSlice({
   name: 'search',
@@ -47,12 +65,24 @@ const searchSlice = createSlice({
       return { ...state, loading: true };
     },
     [fetchAsyncMovies.fulfilled]: (state, { payload }) => {
-      return { ...state, movies: payload, loading: false, message: null };
+      const { Search, totalResults, Response, Error } = payload;
+
+      const total = parseInt(totalResults, 10);
+      const pageLength = Math.ceil(total / 10);
+
+      return {
+        ...state,
+        movies: _uniqBy(Search, 'imdbID'),
+        response: Response,
+        loading: false,
+        message: null,
+        error: Error,
+      };
     },
 
     [searchMovieWithID.pending]: (state) => {
       if (state.loading) return;
-      state.loading = true;
+      return { ...state, theMovie: {}, loading: true };
     },
     [searchMovieWithID.fulfilled]: (state, { payload }) => {
       return { ...state, theMovie: payload, loading: false };
